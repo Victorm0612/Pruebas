@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+char palabras[100];
 void ejecucionProcesos(char *parsed[])
 {
   pid_t pid=fork();
@@ -24,10 +25,16 @@ void ejecucionProcesos(char *parsed[])
    }
 }
 
+void capturadora()
+{
+  printf("\n ****** BIENVENIDO A MI SHELL ******\n");
+  scanf("%s", palabras);
+  printf("\n %s \n",palabras);
+}
 
 
 int main(int argc, char *argv[])
 {
- printf("%s\n",argv[1]);
+ capturadora();
  return 0;
 }
