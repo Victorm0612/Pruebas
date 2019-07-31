@@ -17,11 +17,11 @@ void present()
  sleep(1);
  system("clear");
 }
-int catching(char *origen)
+void catching(char *origen)
 {
-  printf("prompt> ");
-  scanf("%[^\n]s", origen);
-  
+  printf("\nprompt> ");
+  scanf("%[^\n]s", origen); 
+  getchar();
 }
 
 void inDir(char *arg)
@@ -185,9 +185,9 @@ int main()
   route_shell();
   char args[MAX];
   char conv[MAXP];
+  while(1){
   catching(args);
   converted(args, conv);
- 
-  
+   }
  return 0;
 }
