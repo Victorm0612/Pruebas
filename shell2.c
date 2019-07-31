@@ -4,41 +4,93 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+#include <dirent.h>
 #define MAX  1000  //Input
 #define MAXP 10000 //Input Converted
 
-void catching(char *origen)
+char cwd[1024];
+char shell[1024];
+
+void present()
 {
-  printf("\n ****** BIENVENIDO A MI SHELL ******\n");
-  sleep(1);
-  system("clear");
+ printf("\n ******** BIENVENIDO A MI SHELL ********\n");
+ sleep(1);
+ system("clear");
+}
+int catching(char *origen)
+{
   printf("prompt> ");
   scanf("%[^\n]s", origen);
+  
 }
 
-void inDir()
-{}
+void inDir(char *arg)
+{
+  DIR *dir;
+  dir = opendir(arg);
+  if (dir == NULL)
+    {
+     printf("Error!! Al abrir el directorio.\n");
+     } 
+   else 
+    {
+     chdir(arg);
 
-void listDir()
-{}
+    }
+}
+
+void listDir(char *arg)
+{
+    DIR *mydir;
+    struct dirent *myfile;
+    mydir = opendir(arg);
+    while((myfile = readdir(mydir)) != NULL)
+    {
+      printf("%s ", myfile->d_name);
+    }
+    closedir(mydir);
+}
+
+void route_shell()
+{getcwd(shell,sizeof(shell));}
 
 void route()
-{}
+{
+  getcwd(cwd,sizeof(cwd));
+  printf("$PWD = %s:    $shell=%s\n",cwd,shell);
+}
 
-void print()
-{}
+void print(char *arg)
+{printf("%s\n",arg);}
 
-void help()
-{}
+void help() 
+{
+   printf("\n--- BIENVENIDO A SHELL ---"
+          "\n La lista de comandos internos disponibles es:"
+          "\n * cd <directorio>: Cambiar el directorio"
+          "\n * clr: Limpiar la pantalla"
+          "\n * dir: Listar el contenido del directorio"
+          "\n * environ: Listar todas las cadenas de entorno"
+          "\n * echo <comentario>: Desplegar el comentario en pantalla"
+          "\n * help: Desplegar el manual de usuario"
+          "\n * pause: Deterner la operación del shell hasta que el usuario desee"
+          "\n * quit: Salir de SHELL\n"); 
+}
 
 void paus()
-{}
+{
+  char op;
+  do
+   {
+    printf("Pausado..."
+           "\nPresionar Enter para continuar...");
+   }
+  while(op != '\n');
+}
 
-void comandos(char *parsed)
+void comandos(char *comand, char *arg)
 {
   char* comandos[8];
-  char  buff[strlen(comandos)+1];
   comandos[0]="cd";
   comandos[1]="clr";
   comandos[2]="dir";
@@ -51,35 +103,46 @@ void comandos(char *parsed)
   int i=0;
   for(i; i<8; i++)
   {
+    char buff[strlen(comandos[i])+1];
     strcpy(buff,comandos[i]);
-    if(buff[i]==parsed[0])
+    int j=0,flag=0;
+    for(j;buff[j] != '\0' && comand[j] != '\0'; j++)
+    {
+     if(buff[j]==comand[j])
+      {}
+     else 
      {
-      i=i+1;
-      break;
-     } 
-  }
+      flag = 1;
+      break; 
+     }
+    }
+    if(flag==0)
+         {i+=1; break;} //encontrado
+    else {continue;}   //no encontrado
+    }
+
  switch(i)
   {
   case 1: 
-   inDir();
+   inDir(arg);
    break;
   case 2:
    system("clear");
    break;
   case 3:
-   listDir();
+   listDir(arg);
    break;
   case 4:
    route();
    break;
   case 5:
-   print();
+   print(arg);
    break;
   case 6:
    help();
    break;
   case 7:
-   pause();
+   paus();
    break;
   case 8:
    exit(0);
@@ -99,29 +162,32 @@ void converted(char *args, char *conv)
  //LO QUE HAYA DESPUES DEL ESPACIO EN LA SEGUNDA POS
  strcpy(conv,args);
  int i=0,j=0;
- for(i;i<(strlen(conv)+1);i++)
+ for(i; i<(strlen(conv)+1); i++)
   {
     if(conv[i] == ' ') { break;}
     comand[i]=conv[i];
   }
   i=i+1;
-  for(i;i<(strlen(conv)+1);i++)
+  for(i; i<(strlen(conv)+1); i++)
   {
+   char uniones[MAXP];
+   uniones[0]=conv[i];
    if(conv[i] == '\0') {break;}
-   arg[j]=conv[i];
+   strcat(arg,uniones);
    j+=1;
   }
-  char total[2];
-  total[0]=comand;
-  total[1]=arg;
-  comandos(total);
+  comandos(comand,arg);
   }
 
 int main()
 {
- char args[MAX];
- char conv[MAXP];
- catching(args);
- converted(args, conv);
+  present();
+  route_shell();
+  char args[MAX];
+  char conv[MAXP];
+  catching(args);
+  converted(args, conv);
+ 
+  
  return 0;
 }
