@@ -24,6 +24,16 @@ void catching(char *origen)
   getchar();
 }
 
+void route_shell()
+{getcwd(shell,sizeof(shell));}
+
+void route()
+{
+  getcwd(cwd,sizeof(cwd));
+  printf("$PWD = %s:    $shell=%s\n",cwd,shell);
+}
+
+
 void inDir(char *arg)
 {
   DIR *dir;
@@ -35,7 +45,7 @@ void inDir(char *arg)
    else 
     {
      chdir(arg);
-
+     route();
     }
 }
 
@@ -44,20 +54,12 @@ void listDir(char *arg)
     DIR *mydir;
     struct dirent *myfile;
     mydir = opendir(arg);
-    while((myfile = readdir(mydir)) != NULL)
+    if(mydir == NULL){printf("Error!! Al abrir el directorio para lectura.\n");}
+   else{ while((myfile = readdir(mydir)) != NULL)
     {
       printf("%s ", myfile->d_name);
     }
-    closedir(mydir);
-}
-
-void route_shell()
-{getcwd(shell,sizeof(shell));}
-
-void route()
-{
-  getcwd(cwd,sizeof(cwd));
-  printf("$PWD = %s:    $shell=%s\n",cwd,shell);
+    closedir(mydir);}
 }
 
 void print(char *arg)
@@ -84,9 +86,10 @@ void paus()
    {
     printf("Pausado..."
            "\nPresionar Enter para continuar...");
+    op=getchar();
    }
   while(op != '\n');
-}
+ }
 
 void comandos(char *comand, char *arg)
 {
