@@ -20,15 +20,16 @@ int main (int argc, char** argv)
 	//declarar variables e igualar path a la cadena global PATH que contiene las rutas
 	char *split_path;
 	char program_path[100];
-	char *path = getenv("PATH");
+       	char *path = getenv("PATH");
 	
 	split_path = strtok (path,":");//partir cadena
 	int i = 0;//bandera usada para comprobar si almenos encontro en alguna coincidencia
 	while (split_path!= NULL)
 	{
-		strcpy(program_path, "");//asignar vacio a program_path
-		strcat(program_path, split_path);//concatenar a program_path la ruta que se esta analizando
+		program_path[0]='\0';//Inicializando
+                strcat(program_path, split_path);//concatenar a program_path la ruta que se esta analizando
 		strcat(program_path, program_arg);//concatenar a program_path el nombre del programa a analizar
+                //if(i){printf("\nHOLA: %s\n",program_path); break;}
 		if(access(program_path, F_OK) != -1 )//verificar si existe el archivo 
 		{
 			printf("El programa se encuentra en %s\n",program_path);
